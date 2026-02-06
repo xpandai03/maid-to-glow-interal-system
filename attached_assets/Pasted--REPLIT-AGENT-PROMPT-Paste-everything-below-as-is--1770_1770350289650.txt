@@ -1,0 +1,418 @@
+**✅ REPLIT AGENT PROMPT**
+=========================
+
+*(Paste everything below as-is)*
+
+* * * * *
+
+**ROLE**
+--------
+
+You are a **senior full-stack engineer** building a **vibe-coded internal ops prototype** for a cleaning business.
+
+This is **not a production app**. This is a **demo-quality internal system** meant to validate workflows, correctness, and data modeling.
+
+* * * * *
+
+**C --- CLARITY**
+---------------
+
+### **Problem**
+
+The current scheduling system (Maidily) causes **silent failures**:
+
+-   Recurring jobs disappear
+
+-   Pricing drifts due to recalculation
+
+-   Clock-in/out is unreliable
+
+### **Objective**
+
+Build a **lean internal prototype** that proves:
+
+-   Pricing is deterministic and immutable per job
+
+-   Jobs never disappear unless explicitly canceled
+
+-   Subscriptions schedule jobs but never regenerate or mutate them
+
+-   Tech clock-in/out always logs reliably
+
+### **Success Criteria**
+
+-   All 5 screens render
+
+-   End-to-end flow works without errors
+
+-   Data persists correctly across navigation
+
+-   Demo can be recorded in Loom showing confidence and correctness
+
+### **Scope Boundaries (STRICT)**
+
+IN SCOPE:
+
+-   UI screens
+
+-   Core data models
+
+-   Deterministic logic
+
+-   Local persistence
+
+OUT OF SCOPE:
+
+-   Authentication
+
+-   Roles/permissions
+
+-   Stripe
+
+-   Twilio
+
+-   Notifications
+
+-   Reports
+
+-   Dashboards
+
+-   Native mobile apps
+
+-   Fancy UI polish
+
+* * * * *
+
+**L --- LOGIC**
+-------------
+
+### **Application Type**
+
+-   Web app (React)
+
+-   Mobile-friendly (PWA-style layout)
+
+-   Single-user demo (no auth)
+
+### **Core Principles (DO NOT VIOLATE)**
+
+1.  **Jobs are immutable**
+
+    -   Once created, job pricing never changes
+
+2.  **Pricing is snapshotted**
+
+    -   Stored once at job creation
+
+    -   Never recalculated
+
+3.  **Subscriptions only schedule jobs**
+
+    -   They do NOT regenerate, recalc, or mutate existing jobs
+
+4.  **Clock-in/out is manual**
+
+    -   Button click = record event
+
+    -   No background logic
+
+* * * * *
+
+### **Global Data Models (REQUIRED)**
+
+#### **Customer**
+
+```
+id
+name
+address
+```
+
+#### **PricingConfig (static object)**
+
+```
+price_per_bedroom
+price_per_bathroom
+price_per_sqft_range
+extras { id, name, price }
+frequency_discounts
+```
+
+#### **Subscription**
+
+```
+id
+customer_id
+frequency (weekly | biweekly | monthly)
+start_date
+status (active | paused | cancelled)
+```
+
+#### **Job**
+
+```
+id
+customer_id
+subscription_id (nullable)
+scheduled_date
+arrival_window
+price_snapshot (number)
+extras_snapshot (array)
+status (scheduled | completed | cancelled)
+```
+
+#### **TimeLog**
+
+```
+id
+job_id
+clock_in_time
+clock_out_time
+lat
+lng
+```
+
+* * * * *
+
+**E --- SCREENS & REQUIREMENTS**
+------------------------------
+
+* * * * *
+
+### **SCREEN 1: Booking & Pricing**
+
+**Route:**  /book
+
+#### **Look & Feel**
+
+-   Two-column layout
+
+-   Left: input form
+
+-   Right: "Booking Summary" panel (Maidily-inspired, but clean)
+
+#### **Inputs**
+
+-   Bedrooms (number)
+
+-   Bathrooms (number)
+
+-   Square footage (number or range)
+
+-   Frequency (one-time / weekly / biweekly / monthly)
+
+-   Extras (checkbox list)
+
+#### **Behavior**
+
+-   On submit:
+
+    -   Calculate total price ONCE
+
+    -   Create Job with price_snapshot
+
+    -   Redirect to Job Confirmation
+
+#### **Hard Rules**
+
+-   No recalculation after submit
+
+-   Pricing logic must be deterministic
+
+* * * * *
+
+### **SCREEN 2: Job Confirmation / Detail**
+
+**Route:**  /jobs/:id
+
+#### **Look & Feel**
+
+-   Clean admin-style detail page
+
+-   Read-only financials
+
+#### **Displays**
+
+-   Job ID
+
+-   Customer
+
+-   Scheduled date
+
+-   Arrival window
+
+-   Extras
+
+-   **Locked price_snapshot**
+
+-   Status
+
+#### **Hard Rules**
+
+-   No "edit price"
+
+-   No recalculation
+
+-   If edited later, must create a new job (can be mocked)
+
+* * * * *
+
+### **SCREEN 3: Subscription Management**
+
+**Route:**  /subscriptions/:id
+
+#### **Look & Feel**
+
+-   Simple list + metadata
+
+-   No fancy controls
+
+#### **Displays**
+
+-   Subscription frequency
+
+-   Status
+
+-   Explicit list of future jobs (6--8 rows)
+
+#### **Behavior**
+
+-   Cancelling subscription:
+
+    -   Marks future jobs as cancelled
+
+    -   Does NOT delete jobs
+
+-   Jobs must never disappear silently
+
+* * * * *
+
+### **SCREEN 4: Schedule / Calendar**
+
+**Route:**  /schedule
+
+#### **Look & Feel**
+
+-   Week view
+
+-   Colored blocks
+
+-   Arrival windows only (no duration math)
+
+#### **Behavior**
+
+-   Clicking a job opens Job Detail
+
+-   No drag & drop
+
+-   No auto-rescheduling
+
+* * * * *
+
+### **SCREEN 5: Tech Clock-In / Clock-Out**
+
+**Route:**  /tech
+
+#### **Look & Feel**
+
+-   Mobile-first
+
+-   Big buttons
+
+#### **Displays**
+
+-   Today's assigned job
+
+-   Start Timer button
+
+-   Stop Timer button
+
+-   Logged timestamps + GPS
+
+#### **Behavior**
+
+-   Clicking button:
+
+    -   Records timestamp
+
+    -   Captures browser geolocation
+
+-   Manual only
+
+-   No background tracking
+
+* * * * *
+
+**A --- ADAPTATION**
+------------------
+
+### **Iteration Rules**
+
+-   Build minimal UI first
+
+-   Prioritize correctness over visuals
+
+-   Prefer explicit data over derived state
+
+### **Change Policy**
+
+-   Do NOT add features unless explicitly requested
+
+-   If unsure, stub instead of invent
+
+* * * * *
+
+**R --- RESULTS**
+---------------
+
+### **Acceptance Tests**
+
+-   Booking → Job created with locked price
+
+-   Refresh page → price unchanged
+
+-   Subscription → jobs listed explicitly
+
+-   Cancel subscription → jobs remain but marked cancelled
+
+-   Clock-in/out → logs always recorded
+
+### **Final Deliverable**
+
+-   Runnable Replit app
+
+-   Clean routing
+
+-   Seed data
+
+-   Ready for Loom recording
+
+* * * * *
+
+**CONSTRAINTS / GUARDRAILS**
+----------------------------
+
+-   Keep code readable
+
+-   No premature abstractions
+
+-   No backend services beyond local persistence
+
+-   This is a **demo**, not production
+
+* * * * *
+
+**FINAL NOTE TO AGENT**
+-----------------------
+
+If a feature does not directly prevent:
+
+-   pricing drift
+
+-   disappearing jobs
+
+-   unreliable clock-ins
+
+**Do not build it.**
+
+* * * * *
