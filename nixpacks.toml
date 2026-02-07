@@ -1,0 +1,9 @@
+# Railway / Nixpacks: ensure devDependencies install and build runs with Node 18+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
