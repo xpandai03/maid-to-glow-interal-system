@@ -3,8 +3,9 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { BackgroundImage } from "@/components/layout/background-image";
+import { GlassHeader } from "@/components/layout/glass-header";
+import { GlassSidebar } from "@/components/layout/glass-sidebar";
 import NotFound from "@/pages/not-found";
 import BookingPage from "@/pages/booking";
 import JobDetailPage from "@/pages/job-detail";
@@ -17,7 +18,7 @@ import TechClockPage from "@/pages/tech-clock";
 function Router() {
   return (
     <Switch>
-      <Route path="/"><Redirect to="/book" /></Route>
+      <Route path="/"><Redirect to="/schedule" /></Route>
       <Route path="/book" component={BookingPage} />
       <Route path="/jobs/:id" component={JobDetailPage} />
       <Route path="/jobs" component={JobsListPage} />
@@ -31,27 +32,19 @@ function Router() {
 }
 
 function App() {
-  const style = {
-    "--sidebar-width": "16rem",
-    "--sidebar-width-icon": "3rem",
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <SidebarProvider style={style as React.CSSProperties}>
-          <div className="flex h-screen w-full">
-            <AppSidebar />
-            <div className="flex flex-col flex-1 min-w-0">
-              <header className="flex items-center gap-2 p-2 border-b sticky top-0 z-50 bg-background">
-                <SidebarTrigger data-testid="button-sidebar-toggle" />
-              </header>
-              <main className="flex-1 overflow-auto">
-                <Router />
-              </main>
+        <div className="relative min-h-screen overflow-hidden">
+          <BackgroundImage />
+          <GlassHeader />
+          <main className="relative h-screen pt-20 flex">
+            <GlassSidebar />
+            <div className="flex-1 overflow-auto opacity-0 animate-fade-in" style={{ animationDelay: "0.6s" }}>
+              <Router />
             </div>
-          </div>
-        </SidebarProvider>
+          </main>
+        </div>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

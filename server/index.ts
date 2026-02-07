@@ -60,9 +60,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const { seedDatabase } = await import("./seed");
-  await seedDatabase().catch((err) => console.error("Seed error:", err));
-
+  // In-memory storage is pre-seeded with demo data (no DB needed)
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
@@ -92,12 +90,11 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
+  const port = parseInt(process.env.PORT || "3000", 10);
   httpServer.listen(
     {
       port,
       host: "0.0.0.0",
-      reusePort: true,
     },
     () => {
       log(`serving on port ${port}`);

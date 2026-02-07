@@ -1,14 +1,13 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GlassCard, CardContent, CardHeader, CardTitle } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Subscription, Job, Customer } from "@shared/schema";
-import { ArrowLeft, CalendarDays, RefreshCw, DollarSign, XCircle, Clock, User } from "lucide-react";
+import { ArrowLeft, CalendarDays, RefreshCw, DollarSign, XCircle, User } from "lucide-react";
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "active") return <Badge variant="default">Active</Badge>;
@@ -60,9 +59,9 @@ export default function SubscriptionDetailPage() {
   if (subLoading) {
     return (
       <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-4">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-8 w-48 bg-white/10" />
+        <Skeleton className="h-32 w-full bg-white/10" />
+        <Skeleton className="h-64 w-full bg-white/10" />
       </div>
     );
   }
@@ -70,8 +69,8 @@ export default function SubscriptionDetailPage() {
   if (!subscription) {
     return (
       <div className="p-4 md:p-6 max-w-3xl mx-auto text-center space-y-4">
-        <h1 className="text-xl font-semibold">Subscription not found</h1>
-        <Button variant="outline" asChild>
+        <h1 className="text-xl font-semibold text-white">Subscription not found</h1>
+        <Button variant="outline" asChild className="border-white/20 text-white hover:bg-white/10">
           <Link href="/subscriptions"><ArrowLeft className="h-4 w-4 mr-2" /> Back</Link>
         </Button>
       </div>
@@ -83,17 +82,17 @@ export default function SubscriptionDetailPage() {
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-4 flex-wrap">
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon" asChild className="text-white hover:bg-white/10">
           <Link href="/subscriptions" data-testid="link-back-subs">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-2xl font-semibold tracking-tight" data-testid="text-sub-title">Subscription</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-white drop-shadow-lg" data-testid="text-sub-title">Subscription</h1>
             <StatusBadge status={subscription.status} />
           </div>
-          <p className="text-sm text-muted-foreground mt-0.5">ID: {subscription.id.slice(0, 8)}...</p>
+          <p className="text-sm text-white/70 mt-0.5">ID: {subscription.id.slice(0, 8)}...</p>
         </div>
         {subscription.status === "active" && (
           <Button
@@ -108,58 +107,58 @@ export default function SubscriptionDetailPage() {
         )}
       </div>
 
-      <Card>
+      <GlassCard>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2"><RefreshCw className="h-4 w-4" /> Details</CardTitle>
+          <CardTitle className="text-base flex items-center gap-2 text-white"><RefreshCw className="h-4 w-4" /> Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="flex items-start gap-3">
-              <User className="h-4 w-4 mt-0.5 text-muted-foreground" />
+              <User className="h-4 w-4 mt-0.5 text-white/70" />
               <div>
-                <p className="text-sm font-medium">Customer</p>
-                <p className="text-sm text-muted-foreground" data-testid="text-sub-customer">{customer?.name || "Loading..."}</p>
+                <p className="text-sm font-medium text-white">Customer</p>
+                <p className="text-sm text-white/70" data-testid="text-sub-customer">{customer?.name || "Loading..."}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <RefreshCw className="h-4 w-4 mt-0.5 text-muted-foreground" />
+              <RefreshCw className="h-4 w-4 mt-0.5 text-white/70" />
               <div>
-                <p className="text-sm font-medium">Frequency</p>
-                <p className="text-sm text-muted-foreground capitalize" data-testid="text-sub-frequency">{subscription.frequency}</p>
+                <p className="text-sm font-medium text-white">Frequency</p>
+                <p className="text-sm text-white/70 capitalize" data-testid="text-sub-frequency">{subscription.frequency}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <CalendarDays className="h-4 w-4 mt-0.5 text-muted-foreground" />
+              <CalendarDays className="h-4 w-4 mt-0.5 text-white/70" />
               <div>
-                <p className="text-sm font-medium">Start Date</p>
-                <p className="text-sm text-muted-foreground" data-testid="text-sub-start">{subscription.startDate}</p>
+                <p className="text-sm font-medium text-white">Start Date</p>
+                <p className="text-sm text-white/70" data-testid="text-sub-start">{subscription.startDate}</p>
               </div>
             </div>
           </div>
         </CardContent>
-      </Card>
+      </GlassCard>
 
-      <Card>
+      <GlassCard>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2"><CalendarDays className="h-4 w-4" /> Scheduled Jobs ({jobs.length})</CardTitle>
+          <CardTitle className="text-base flex items-center gap-2 text-white"><CalendarDays className="h-4 w-4" /> Scheduled Jobs ({jobs.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {sortedJobs.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">No jobs for this subscription.</p>
+            <p className="text-sm text-white/70 text-center py-6">No jobs for this subscription.</p>
           ) : (
             <div className="space-y-2">
               {sortedJobs.map((job) => (
                 <Link key={job.id} href={`/jobs/${job.id}`}>
-                  <div className="flex items-center justify-between p-3 rounded-md border hover-elevate cursor-pointer" data-testid={`row-sub-job-${job.id}`}>
+                  <div className="flex items-center justify-between p-3 rounded-md border border-white/20 hover:bg-white/10 transition-all cursor-pointer" data-testid={`row-sub-job-${job.id}`}>
                     <div className="flex items-center gap-3">
-                      <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                      <CalendarDays className="h-4 w-4 text-white/70" />
                       <div>
-                        <p className="text-sm font-medium">{job.scheduledDate}</p>
-                        <p className="text-xs text-muted-foreground">{job.arrivalWindow}</p>
+                        <p className="text-sm font-medium text-white">{job.scheduledDate}</p>
+                        <p className="text-xs text-white/70">{job.arrivalWindow}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium flex items-center gap-1">
+                      <span className="text-sm font-medium text-white flex items-center gap-1">
                         <DollarSign className="h-3 w-3" />{job.priceSnapshot.toFixed(2)}
                       </span>
                       <JobStatusBadge status={job.status} />
@@ -170,7 +169,7 @@ export default function SubscriptionDetailPage() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </GlassCard>
     </div>
   );
 }
